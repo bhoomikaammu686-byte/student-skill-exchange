@@ -1,0 +1,104 @@
+
+
+USE student_skill_exchange;
+CREATE TABLE users22(
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(15),
+    department VARCHAR(100),
+    year VARCHAR(20),
+    bio TEXT,
+    profile_image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE skill22 (
+    skill_id INT AUTO_INCREMENT PRIMARY KEY,
+    skill_name VARCHAR(100) UNIQUE NOT NULL,
+    category VARCHAR(100),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE student_skill22(
+    student_skill_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    skill_id INT NOT NULL,
+    skill_type ENUM('TEACH', 'LEARN') NOT NULL,
+    skill_level ENUM('BEGINNER', 'INTERMEDIATE', 'ADVANCED') DEFAULT 'BEGINNER',
+
+    FOREIGN KEY (user_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (skill_id) REFERENCES skill22(skill_id)
+        ON DELETE CASCADE
+);
+CREATE TABLE exchange_requests22 (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    offered_skill_id INT,
+    requested_skill_id INT,
+    message TEXT,
+    status ENUM('PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED')
+        DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (sender_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (receiver_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (offered_skill_id) REFERENCES skill22(skill_id)
+        ON DELETE SET NULL,
+
+    FOREIGN KEY (requested_skill_id) REFERENCES skill22(skill_id)
+        ON DELETE SET NULL
+);
+CREATE TABLE messages22 (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (sender_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (receiver_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE
+);
+CREATE TABLE reviews22 (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    reviewer_id INT NOT NULL,
+    reviewed_user_id INT NOT NULL,
+    request_id INT,
+    rating INT NOT NULL,
+    review_text TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (reviewer_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (reviewed_user_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (request_id) REFERENCES exchange_requests22(request_id)
+        ON DELETE SET NULL,
+
+    CHECK (rating >= 1 AND rating <= 5)
+);
+CREATE TABLE notifications22 (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users22(user_id)
+        ON DELETE CASCADE
+);
+

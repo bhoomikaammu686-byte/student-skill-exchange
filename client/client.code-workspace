@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../db.php"
+		},
+		{
+			"path": "../node_modules"
+		},
+		{
+			"path": "../server"
+		}
+	]
+}
